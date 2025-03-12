@@ -14,9 +14,16 @@ include ('connessione.php');
     <?php
 
     $num = $_GET["numAttori"];
+    
+
+    if ($num < 1) {
+        echo "<p>Nessun attore selezionato</p>";
+    }
+
+   
 
     
-    $query = "SELECT attori.CodAttore, attori.Nome, COUNT(recita.CodFilm) FROM attori LEFT JOIN recita ON attori.CodAttore = recita.CodAttore GROUP BY attori.CodAttore, attori.Nome ORDER BY attori.Nome;";
+    $query = "SELECT attori.CodAttore, attori.Nome, COUNT(recita.CodFilm)  AS NumFilm  FROM attori LEFT JOIN recita ON attori.CodAttore = recita.CodAttore GROUP BY attori.CodAttore, attori.Nome ORDER BY attori.Nome LIMIT  $num ";
 
     $result = $conn->query($query);
 
@@ -30,23 +37,38 @@ include ('connessione.php');
         echo "</tr>";
     
 
-    $count = 0;
-
     if ($result->num_rows > 0) {
         while ($riga = $result->fetch_assoc()){
-            $count++;
-            if ($count <= $num){
             echo "<tr>";
-            foreach($riga as $value){
-                echo "<td style = 'border: 1px solid black'>" . $value . "</td>";
-            }
-        }
+            echo "<td style='border: 1px solid black'>" . $riga['CodAttore'] . "</td>";
+            echo "<td style='border: 1px solid black'>" . $riga['Nome'] . "</td>";
+            echo "<td style='border: 1px solid black'>" . $riga['NumFilm'] . "</td>";
             echo "</tr>";
     
+            $codAttore = $riga['CodAttore'];
+            $query_film = "SELECT film.CodFilm, film.Titolo, film.AnnoProduzione FROM film LEFT JOIN recita ON film.CodFilm = recita.CodFilm WHERE recita.CodAttore = $codAttore";
+
+            $result_film = $conn->query($query_film);
+            echo "<td style='border: 1px solid black'>";
+            if ($result_film->num_rows > 0) {
+                echo "<ul>";
+                while ($film = $result_film->fetch_assoc()) {
+                    echo "<li>" . $film['CodFilm'] . " - " . $film['Titolo'] . " " . $film['AnnoProduzione'] . "</li>";
+                }
+                echo "</ul>";
+            } else {
+                echo "-";
+            }
+            echo "</td>";
+
+            echo "</tr>";
+
+
+        }
         }
         echo "</table>";
     
-    }
+    
     
 
     
