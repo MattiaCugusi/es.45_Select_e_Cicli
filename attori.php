@@ -43,17 +43,18 @@ include ('connessione.php');
             echo "<td style='border: 1px solid black'>" . $riga['CodAttore'] . "</td>";
             echo "<td style='border: 1px solid black'>" . $riga['Nome'] . "</td>";
             echo "<td style='border: 1px solid black'>" . $riga['NumFilm'] . "</td>";
+            
             echo "</tr>";
     
             $codAttore = $riga['CodAttore'];
             $query_film = "SELECT film.CodFilm, film.Titolo, film.AnnoProduzione FROM film LEFT JOIN recita ON film.CodFilm = recita.CodFilm WHERE recita.CodAttore = $codAttore";
 
-            $result_film = $conn->query($query_film);
+            $risultato_film = $conn->query($query_film);
             echo "<td style='border: 1px solid black'>";
-            if ($result_film->num_rows > 0) {
+            if ($risultato_film->num_rows > 0) {
                 echo "<ul>";
-                while ($film = $result_film->fetch_assoc()) {
-                    echo "<li>" . $film['CodFilm'] . " - " . $film['Titolo'] . " " . $film['AnnoProduzione'] . "</li>";
+                while ($film = $risultato_film->fetch_assoc()) {
+                    echo "<li>" . $film['CodFilm'] . " - " . $film['Titolo'] . " - " . $film['AnnoProduzione'] . "</li>";
                 }
                 echo "</ul>";
             } else {
